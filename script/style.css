@@ -34,9 +34,11 @@ h4 {
 .progress {
     background-color: #272727 !important;
     width: 100%;
+    font-size: 0.5rem
 }
 .cat-title {
     color: #fbb700 !important;
+    width: 50%;
     font-weight: 500;
     font-size: 0.85714286rem;
     text-transform: uppercase;
