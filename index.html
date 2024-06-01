@@ -14,5 +14,12 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <script>
+        // Assume the URL is "http://example.com/?token=value1"
+
+        let params = new URLSearchParams(window.location.search);
+
+        let token = params.get('token');
+    </script>
 </body>
 </html>
