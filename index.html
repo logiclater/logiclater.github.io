@@ -28,25 +28,19 @@
         const startDate = startOfMonth.toISOString().split('T')[0];
         const endDate = endOfMonth.toISOString().split('T')[0];
         
-        fetch('https://dev.lunchmoney.app/v1/budgets', {
-            method: 'POST',
+        fetch(`https://dev.lunchmoney.app/v1/budgets?start_date=${startDate}&end_date=${endDate}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                start_date: startDate,
-                end_date: endDate
+            }        
+            .then(response => response.json())
+            .then(data => {
+                const formattedData = JSON.stringify(data, null, 2);
+                const pre = document.createElement('pre');
+                pre.textContent = formattedData;
+                document.body.appendChild(pre);
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            const formattedData = JSON.stringify(data, null, 2);
-            const pre = document.createElement('pre');
-            pre.textContent = formattedData;
-            document.body.appendChild(pre);
-        })
-        .catch(error => console.error(error));
+        }).catch(error => console.error(error));
     </script>
 </body>
 </html>
