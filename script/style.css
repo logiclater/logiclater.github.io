@@ -5,7 +5,6 @@ body {
 div.container {
     background-color: #303030 !important;
     box-shadow: none !important;
-    border-color: #303030 !important;
     color: #d2d2d2 !important;
     margin-top: 1em;
     margin-bottom: 1em;
@@ -18,7 +17,7 @@ div.container {
     /* min-height: 0px; */
     background: #fff;
     padding: 0 0.5em;
-    border: 1px solid #303030;
+    border: 1px solid #303030 !important;
     border-radius: 0.28571429rem;
 }
 h4 {
