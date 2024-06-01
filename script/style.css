@@ -7,7 +7,7 @@ div.container {
     box-shadow: none !important;
     border-color: #303030 !important;
     color: #d2d2d2 !important;
-    margin-top: 0em;
+    margin-top: 1em;
     margin-bottom: 1em;
     max-width: 800px;
     width: 100%;
@@ -56,4 +56,21 @@ div.income .amount {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
+}
+/* a .refresh-icon {
+    color: #aeaeae;
+    background-color: #aeaeae;
+    color
+    font-size: 1.5em;
+    width: 10%;
+} */
+.refresh-icon {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 9999;
+    width: 50px;
+}
+.subgroup {
+    left: 10px;
 }

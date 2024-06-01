@@ -55,9 +55,19 @@ const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 
 const startDate = startOfMonth.toISOString().split('T')[0];
 const endDate = endOfMonth.toISOString().split('T')[0];
 
-let incomeData;
+let lastRunTime = null;
 
-setInterval(() => {
+if (isValidToken(token)) { update(); }
+
+setInterval(() => {update()}, 300000); // 1 hour in milliseconds
+
+function update() {
+    if (lastRunTime && (Date.now() - lastRunTime) < 30000) {
+        console.log('Skipping update request.  Last update was within the last 30s');
+        return; // Don't do anything if the function has run within the last 30 seconds
+    }
+    lastRunTime = Date.now(); // Update the last run time
+
     fetch(`https://dev.lunchmoney.app/v1/budgets?start_date=${startDate}&end_date=${endDate}`, {
         headers: {
             'Authorization': `Bearer ${atob(token)}`,
@@ -65,19 +75,28 @@ setInterval(() => {
         }
     }).then(response => response.json())
     .then(data => {
-        // Clear existing income and expense panels
-        document.querySelector('.income').innerHTML = '';
-        document.querySelector('.expenses').innerHTML = '';
+        $('#refresh').css('transition', 'none');
+        $('#refresh').css('transform', 'rotate(0deg)');
+        $('#refresh').css('transition', 'transform 3s');
+        $('#refresh').css('transform', 'rotate(-1080deg)');
 
         let budgets = data.filter(budget => !budget.exclude_from_budget && !budget.exclude_from_total && flatten(budget.data).length > 3);
         let income = budgets.filter(budget => budget.is_income === true);
         let expenses = budgets.filter(budget => budget.is_income === false);
-        console.log(budgets);
-        console.log(income);
-        console.log(expenses);
+
+        console.log("Income: ", income);
+        console.log("Expenses: ", expenses);
+
+        // Clear existing income and expense panels
+        document.querySelector('div.income').innerHTML = '';
+        document.querySelector('div.expenses').innerHTML = '';
+
         income.forEach(income => {
             const incomePanel = document.createElement('div');
             incomePanel.classList.add('income', 'container');
+            if (!income.is_group) {
+                incomePanel.classList.add('subgroup')
+            }
             incomePanel.innerHTML = `
                 <div class="header" style="width:100%;">
                     <span class="cat-title" style="float: left;">${income.category_name}</span>
@@ -100,6 +119,9 @@ setInterval(() => {
         expenses.forEach(expense => {
             const expensePanel = document.createElement('div');
             expensePanel.classList.add('expense', 'container');
+            if (!income.is_group) {
+                expensePanel.classList.add('subgroup')
+            }
             expensePanel.innerHTML = `
                 <div class="header" style="width:100%;">
                     <span class="cat-title" style="float: left;">${expense.category_name}</span>
@@ -121,4 +143,4 @@ setInterval(() => {
         });
     })
     .catch(error => console.error(error));
-}, 3600000); // 1 hour in milliseconds
+}
