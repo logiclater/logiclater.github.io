@@ -12,11 +12,17 @@ function flatten(obj) {
 }
 
 // Assume the URL is "http://example.com/?token=value1"
-
 let params = new URLSearchParams(window.location.search);
-
+let lastRunTime = null;
 let token = params.get('token');
-if (!isValidToken(token)) {
+const currentDate = new Date();
+const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+const startDate = startOfMonth.toISOString().split('T')[0];
+const endDate = endOfMonth.toISOString().split('T')[0];
+
+// Function that initializes the token form
+function initializeTokenForm() {
     const tokenForm = document.createElement('form');
     const tokenInput = document.createElement('input');
     const submitButton = document.createElement('button');
@@ -31,7 +37,6 @@ if (!isValidToken(token)) {
             alert('Invalid token. Please try again.');
         }
     });
-
     // Add label for the token input
     const tokenLabel = document.createElement('label');
     tokenLabel.textContent = 'Enter Lunch Money Token:';
@@ -48,32 +53,13 @@ if (!isValidToken(token)) {
     document.querySelector('.container').appendChild(tokenForm);
 }
 
-function isValidToken(token) {
-    // Add your token validation logic here
-    // Return true if the token is valid, false otherwise
-    return token && token.length > 0;
-}
-
-const currentDate = new Date();
-const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-const startDate = startOfMonth.toISOString().split('T')[0];
-const endDate = endOfMonth.toISOString().split('T')[0];
-
-let lastRunTime = null;
-
-if (isValidToken(token)) { update(); }
-
-setInterval(() => {update()}, 300000); // 1 hour in milliseconds
-
-function update() {
+// Function that updates the budget information
+function updateBudget() {
     if (lastRunTime && (Date.now() - lastRunTime) < 30000) {
         console.log('Skipping update request.  Last update was within the last 30s');
         return; // Don't do anything if the function has run within the last 30 seconds
     }
     lastRunTime = Date.now(); // Update the last run time
-
     fetch(`https://dev.lunchmoney.app/v1/budgets?start_date=${startDate}&end_date=${endDate}`, {
         headers: {
             'Authorization': `Bearer ${atob(token)}`,
@@ -85,18 +71,14 @@ function update() {
         $('#refresh').css('transform', 'rotate(0deg)');
         $('#refresh').css('transition', 'transform 3s');
         $('#refresh').css('transform', 'rotate(-1080deg)');
-
         let budgets = data.filter(budget => !budget.exclude_from_budget && !budget.exclude_from_total && flatten(budget.data).length > 3);
         let income = budgets.filter(budget => budget.is_income === true);
         let expenses = budgets.filter(budget => budget.is_income === false);
-
         console.log("Income: ", income);
         console.log("Expenses: ", expenses);
-
         // Clear existing income and expense panels
         document.querySelector('div.income').innerHTML = '';
         document.querySelector('div.expenses').innerHTML = '';
-
         income.forEach(income => {
             const incomePanel = document.createElement('div');
             incomePanel.classList.add('income', 'container');
@@ -148,5 +130,35 @@ function update() {
             document.querySelector('.expenses').appendChild(expensePanel);
         });
     })
-    .catch(error => console.error(error));
+    .catch(error => { 
+        console.error(error);
+        initializeTokenForm();
+
+    });
 }
+
+// Function that checks if a token is valid
+function isValidToken(t) {
+    // Return true if the value of `t` is > 0 chars
+    return t && t.length > 0;
+}
+
+
+// Function that initializes the script
+function initializeScript() {
+    // Call the initializeScript function to start the script
+    lastRunTime = null;
+    if (!isValidToken(token)) {
+        initializeTokenForm();
+    } else { 
+        updateBudget();
+    }
+    setInterval(() => {updateBudget()}, 300000); // 5 min in milliseconds
+}
+
+function _init() {
+    // Wait for the DOM content to load before initializing the script
+    document.addEventListener('DOMContentLoaded', initializeScript());
+}
+
+_init();
