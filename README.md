@@ -1,3 +1,0 @@
-# logiclater.github.io
-
-test
