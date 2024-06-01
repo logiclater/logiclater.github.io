@@ -32,14 +32,13 @@
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }        
-            .then(response => response.json())
-            .then(data => {
-                const formattedData = JSON.stringify(data, null, 2);
-                const pre = document.createElement('pre');
-                pre.textContent = formattedData;
-                document.body.appendChild(pre);
-            })
+            }})
+        .then(response => response.json())
+        .then(data => {
+            const formattedData = JSON.stringify(data, null, 2);
+            const pre = document.createElement('pre');
+            pre.textContent = formattedData;
+            document.body.appendChild(pre);
         }).catch(error => console.error(error));
     </script>
 </body>
