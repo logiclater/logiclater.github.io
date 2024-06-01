@@ -57,62 +57,68 @@ const endDate = endOfMonth.toISOString().split('T')[0];
 
 let incomeData;
 
-fetch(`https://dev.lunchmoney.app/v1/budgets?start_date=${startDate}&end_date=${endDate}`, {
-    headers: {
-    'Authorization': `Bearer ${atob(token)}`,
-    'Content-Type': 'application/json'
-    }
-}).then(response => response.json())
-.then(data => {
-    let budgets = data.filter(budget => !budget.exclude_from_budget && !budget.exclude_from_total && flatten(budget.data).length > 3);
-    let income = budgets.filter(budget => budget.is_income === true);
-    let expenses = budgets.filter(budget => budget.is_income === false);
-    console.log(budgets);
-    console.log(income);
-    console.log(expenses);
-    income.forEach(income => {
-        const incomePanel = document.createElement('div');
-        incomePanel.classList.add('income', 'container');
-        incomePanel.innerHTML = `
-            <div class="header" style="width:100%;">
-                <span class="cat-title" style="float: left;">${income.category_name}</span>
-                <span class="amount" style="float: right;">${income.data[startDate]["budget_amount"]}</span>
-            </div>
-        `;
-        const progressBar = document.createElement('div');
-        progressBar.classList.add('progress', 'mb-3');
-        const progressBarInner = document.createElement('div');
-        progressBarInner.classList.add('progress-bar');
-        progressBarInner.setAttribute('role', 'progressbar');
-        progressBarInner.setAttribute('aria-valuenow', `${(income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100}`);
-        progressBarInner.setAttribute('aria-valuemin', '0');
-        progressBarInner.setAttribute('aria-valuemax', '100');
-        progressBarInner.style.width = `${(income.data[startDate]["budget_amount"] === 0 ? 100 : (income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100)}%`;
-        progressBar.appendChild(progressBarInner);
-        incomePanel.appendChild(progressBar);
-        document.querySelector('.income').appendChild(incomePanel);
-    });
-    expenses.forEach(expense => {
-        const expensePanel = document.createElement('div');
-        expensePanel.classList.add('expense', 'container');
-        expensePanel.innerHTML = `
-            <div class="header" style="width:100%;">
-                <span class="cat-title" style="float: left;">${expense.category_name}</span>
-                <span class="amount" style="float: right;">${expense.data[startDate]["budget_amount"]}</span>
-            </div>
-        `;
-        const progressBar = document.createElement('div');
-        progressBar.classList.add('progress', 'mb-3');
-        const progressBarInner = document.createElement('div');
-        progressBarInner.classList.add('progress-bar');
-        progressBarInner.setAttribute('role', 'progressbar');
-        progressBarInner.setAttribute('aria-valuenow', `${(expense.data[startDate]["budget_amount"] / expense.data[startDate]["spending_to_base"]) * 100}`);
-        progressBarInner.setAttribute('aria-valuemin', '0');
-        progressBarInner.setAttribute('aria-valuemax', 100);
-        progressBarInner.style.width = `${(expense.data[startDate]["budget_amount"] / expense.data[startDate]["spending_to_base"]) * 100}%`;
-        progressBar.appendChild(progressBarInner);
-        expensePanel.appendChild(progressBar);
-        document.querySelector('.expenses').appendChild(expensePanel);
-    });
-})
-.catch(error => console.error(error));
+setInterval(() => {
+    fetch(`https://dev.lunchmoney.app/v1/budgets?start_date=${startDate}&end_date=${endDate}`, {
+        headers: {
+            'Authorization': `Bearer ${atob(token)}`,
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json())
+    .then(data => {
+        // Clear existing income and expense panels
+        document.querySelector('.income').innerHTML = '';
+        document.querySelector('.expenses').innerHTML = '';
+
+        let budgets = data.filter(budget => !budget.exclude_from_budget && !budget.exclude_from_total && flatten(budget.data).length > 3);
+        let income = budgets.filter(budget => budget.is_income === true);
+        let expenses = budgets.filter(budget => budget.is_income === false);
+        console.log(budgets);
+        console.log(income);
+        console.log(expenses);
+        income.forEach(income => {
+            const incomePanel = document.createElement('div');
+            incomePanel.classList.add('income', 'container');
+            incomePanel.innerHTML = `
+                <div class="header" style="width:100%;">
+                    <span class="cat-title" style="float: left;">${income.category_name}</span>
+                    <span class="amount" style="float: right;">${income.data[startDate]["budget_amount"]}</span>
+                </div>
+            `;
+            const progressBar = document.createElement('div');
+            progressBar.classList.add('progress', 'mb-3');
+            const progressBarInner = document.createElement('div');
+            progressBarInner.classList.add('progress-bar');
+            progressBarInner.setAttribute('role', 'progressbar');
+            progressBarInner.setAttribute('aria-valuenow', `${(income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100}`);
+            progressBarInner.setAttribute('aria-valuemin', '0');
+            progressBarInner.setAttribute('aria-valuemax', '100');
+            progressBarInner.style.width = `${(income.data[startDate]["budget_amount"] === 0 ? 100 : (income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100)}%`;
+            progressBar.appendChild(progressBarInner);
+            incomePanel.appendChild(progressBar);
+            document.querySelector('.income').appendChild(incomePanel);
+        });
+        expenses.forEach(expense => {
+            const expensePanel = document.createElement('div');
+            expensePanel.classList.add('expense', 'container');
+            expensePanel.innerHTML = `
+                <div class="header" style="width:100%;">
+                    <span class="cat-title" style="float: left;">${expense.category_name}</span>
+                    <span class="amount" style="float: right;">${expense.data[startDate]["budget_amount"]}</span>
+                </div>
+            `;
+            const progressBar = document.createElement('div');
+            progressBar.classList.add('progress', 'mb-3');
+            const progressBarInner = document.createElement('div');
+            progressBarInner.classList.add('progress-bar');
+            progressBarInner.setAttribute('role', 'progressbar');
+            progressBarInner.setAttribute('aria-valuenow', `${(expense.data[startDate]["budget_amount"] / expense.data[startDate]["spending_to_base"]) * 100}`);
+            progressBarInner.setAttribute('aria-valuemin', '0');
+            progressBarInner.setAttribute('aria-valuemax', 100);
+            progressBarInner.style.width = `${(expense.data[startDate]["budget_amount"] / expense.data[startDate]["spending_to_base"]) * 100}%`;
+            progressBar.appendChild(progressBarInner);
+            expensePanel.appendChild(progressBar);
+            document.querySelector('.expenses').appendChild(expensePanel);
+        });
+    })
+    .catch(error => console.error(error));
+}, 3600000); // 1 hour in milliseconds
