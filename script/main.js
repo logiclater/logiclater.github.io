@@ -31,6 +31,12 @@ if (!isValidToken(token)) {
             alert('Invalid token. Please try again.');
         }
     });
+
+    // Add label for the token input
+    const tokenLabel = document.createElement('label');
+    tokenLabel.textContent = 'Enter Lunch Money Token:';
+    tokenLabel.setAttribute('for', 'token-input');
+    tokenForm.appendChild(tokenLabel);
     
     tokenInput.setAttribute('type', 'text');
     submitButton.setAttribute('type', 'submit');
