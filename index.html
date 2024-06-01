@@ -20,6 +20,19 @@
         let params = new URLSearchParams(window.location.search);
 
         let token = params.get('token');
+        fetch('https://dev.lunchmoney.app/v1/budgets', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const formattedData = JSON.stringify(data, null, 2);
+                const pre = document.createElement('pre');
+                pre.textContent = formattedData;
+                document.body.appendChild(pre);
+            })
+            .catch(error => console.error(error));
     </script>
 </body>
 </html>
