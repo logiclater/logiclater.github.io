@@ -17,8 +17,7 @@ div.container {
     /* min-height: 0px; */
     background: #fff;
     padding: 0 0.5em;
-    border: 1px solid #303030 !important;
-    border-radius: 0.28571429rem;
+    border: 0px;
 }
 h4 {
     color: #aeaeae;
