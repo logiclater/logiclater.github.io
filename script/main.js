@@ -22,14 +22,14 @@ if (!isValidToken(token)) {
     const submitButton = document.createElement('button');
     
     tokenForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const newToken = tokenInput.value;
-    if (isValidToken(newToken)) {
-        // Redirect to the same page with the new token as a query parameter
-        window.location.href = `${window.location.origin}${window.location.pathname}?token=${newToken}`;
-    } else {
-        alert('Invalid token. Please try again.');
-    }
+        event.preventDefault();
+        const newToken = tokenInput.value;
+        if (isValidToken(newToken)) {
+            // Redirect to the same page with the new token as a query parameter
+            window.location.href = `${window.location.origin}${window.location.pathname}?token=${btoa(newToken)}`;
+        } else {
+            alert('Invalid token. Please try again.');
+        }
     });
     
     tokenInput.setAttribute('type', 'text');
@@ -59,7 +59,7 @@ let incomeData;
 
 fetch(`https://dev.lunchmoney.app/v1/budgets?start_date=${startDate}&end_date=${endDate}`, {
     headers: {
-    'Authorization': `Bearer ${token}`,
+    'Authorization': `Bearer ${atob(token)}`,
     'Content-Type': 'application/json'
     }
 }).then(response => response.json())
