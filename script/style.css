@@ -1,0 +1,56 @@
+body {
+    background-color: #202020;
+    margin: 10px;
+}
+div.container {
+    background-color: #303030 !important;
+    box-shadow: none !important;
+    border-color: #303030 !important;
+    color: #d2d2d2 !important;
+    margin-top: 0em;
+    margin-bottom: 1em;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* width: 260px; */
+    /* min-height: 0px; */
+    background: #fff;
+    padding: 0 0.5em;
+    border: 1px solid #DCDCDC;
+    border-radius: 0.28571429rem;
+}
+h4 {
+    color: #aeaeae;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.85714286rem;
+    font-family: 'Avenir';
+    text-align: center;
+    margin-top: 2px;
+    line-height: normal;
+}
+.progress {
+    background-color: #272727 !important;
+    width: 100%;
+}
+.cat-title {
+    color: #fbb700 !important;
+    font-weight: 500;
+    text-transform: uppercase;
+    text-align: left;
+    float: left;
+}
+.amount {
+    text-align: right;
+    float: right;
+}
+div.income .amount {
+    color: #21ba45 !important
+}
+.income {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+}

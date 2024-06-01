@@ -5,41 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bootstrap Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="script/style.css">
+</head>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to My Bootstrap Page</h1>
-        <p>This is a basic Bootstrap template.</p>
+    <div>
+        <div class="container income">
+            <h4>Income</h4>
+        </div>
+        <div class="container expenses">
+            <h4>Expenses</h4>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
-    <script>
-        // Assume the URL is "http://example.com/?token=value1"
-
-        let params = new URLSearchParams(window.location.search);
-
-        let token = params.get('token');
-
-        const currentDate = new Date();
-        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-        
-        const startDate = startOfMonth.toISOString().split('T')[0];
-        const endDate = endOfMonth.toISOString().split('T')[0];
-        
-        fetch(`https://dev.lunchmoney.app/v1/budgets?start_date=${startDate}&end_date=${endDate}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }})
-        .then(response => response.json())
-        .then(data => {
-            const formattedData = JSON.stringify(data, null, 2);
-            const pre = document.createElement('pre');
-            pre.textContent = formattedData;
-            document.body.appendChild(pre);
-        }).catch(error => console.error(error));
-    </script>
+    <script src="script/main.js"></script>
 </body>
 </html>
