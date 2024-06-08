@@ -76,64 +76,83 @@ function updateBudget() {
         let expenses = budgets.filter(budget => budget.is_income === false);
         console.log("Income: ", income);
         console.log("Expenses: ", expenses);
-        // Clear existing income and expense panels
-        document.querySelector('div.income').innerHTML = '';
-        document.querySelector('div.expenses').innerHTML = '';
-        income.forEach(income => {
-            const incomePanel = document.createElement('div');
-            incomePanel.classList.add('income', 'container');
-            if (!income.is_group) {
-                incomePanel.classList.add('subgroup')
-            }
-            incomePanel.innerHTML = `
-                <div class="header" style="width:100%;">
-                    <span class="cat-title" style="float: left;">${income.category_name}</span>
-                    <span class="amount" style="float: right;">${income.data[startDate]["budget_amount"]}</span>
-                </div>
-            `;
-            const progressBar = document.createElement('div');
-            progressBar.classList.add('progress', 'mb-3');
-            const progressBarInner = document.createElement('div');
-            progressBarInner.classList.add('progress-bar');
-            progressBarInner.setAttribute('role', 'progressbar');
-            progressBarInner.setAttribute('aria-valuenow', `${(income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100}`);
-            progressBarInner.setAttribute('aria-valuemin', '0');
-            progressBarInner.setAttribute('aria-valuemax', '100');
-            progressBarInner.style.width = `${(income.data[startDate]["budget_amount"] === 0 ? 100 : (income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100)}%`;
-            progressBar.appendChild(progressBarInner);
-            incomePanel.appendChild(progressBar);
-            document.querySelector('.income').appendChild(incomePanel);
-        });
-        expenses.forEach(expense => {
-            const expensePanel = document.createElement('div');
-            expensePanel.classList.add('expense', 'container');
-            if (!income.is_group) {
-                expensePanel.classList.add('subgroup')
-            }
-            expensePanel.innerHTML = `
-                <div class="header" style="width:100%;">
-                    <span class="cat-title" style="float: left;">${expense.category_name}</span>
-                    <span class="amount" style="float: right;">${expense.data[startDate]["budget_amount"]}</span>
-                </div>
-            `;
-            const progressBar = document.createElement('div');
-            progressBar.classList.add('progress', 'mb-3');
-            const progressBarInner = document.createElement('div');
-            progressBarInner.classList.add('progress-bar');
-            progressBarInner.setAttribute('role', 'progressbar');
-            progressBarInner.setAttribute('aria-valuenow', `${(expense.data[startDate]["budget_amount"] / expense.data[startDate]["spending_to_base"]) * 100}`);
-            progressBarInner.setAttribute('aria-valuemin', '0');
-            progressBarInner.setAttribute('aria-valuemax', 100);
-            progressBarInner.style.width = `${(expense.data[startDate]["budget_amount"] / expense.data[startDate]["spending_to_base"]) * 100}%`;
-            progressBar.appendChild(progressBarInner);
-            expensePanel.appendChild(progressBar);
-            document.querySelector('.expenses').appendChild(expensePanel);
-        });
+        if (document.querySelector('div.income')) {
+            document.querySelector('div.income').innerHTML = '';
+            income.forEach(income => {
+                const incomePanel = document.createElement('div');
+                incomePanel.classList.add('income', 'container');
+                if (!income.is_group) {
+                    incomePanel.classList.add('subgroup')
+                }
+                incomePanel.innerHTML = `
+                    <div class="header" style="width:100%;">
+                        <span class="cat-title" style="float: left;">${income.category_name}</span>
+                        <span class="amount" style="float: right;">${income.data[startDate]["budget_amount"]}</span>
+                    </div>
+                `;
+                const progressBar = document.createElement('div');
+                progressBar.classList.add('progress', 'mb-3');
+                const progressBarInner = document.createElement('div');
+                progressBarInner.classList.add('progress-bar');
+                progressBarInner.setAttribute('role', 'progressbar');
+                progressBarInner.setAttribute('aria-valuenow', `${(income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100}`);
+                progressBarInner.setAttribute('aria-valuemin', '0');
+                progressBarInner.setAttribute('aria-valuemax', '100');
+                progressBarInner.style.width = `${(income.data[startDate]["budget_amount"] === 0 ? 100 : (income.data[startDate]["budget_amount"] / income.data[startDate]["spending_to_base"]) * 100)}%`;
+                progressBar.appendChild(progressBarInner);
+                incomePanel.appendChild(progressBar);
+                document.querySelector('.income').appendChild(incomePanel);
+            });
+        }
+        if (document.querySelector('div.expenses')) {
+            document.querySelector('div.expenses').innerHTML = '';
+            expenses.forEach(expense => {
+                const expensePanel = document.createElement('div');
+                expensePanel.classList.add('expense', 'container');
+                if (!income.is_group) {
+                    expensePanel.classList.add('subgroup')
+                }
+                expensePanel.innerHTML = `
+                    <div class="header" style="width:100%;">
+                        <span class="cat-title" style="float: left;">${expense.category_name}</span>
+                        <span class="amount" style="float: right;">${expense.data[startDate]["budget_amount"]}</span>
+                    </div>
+                `;
+                const progressBar = document.createElement('div');
+                progressBar.classList.add('progress', 'mb-3');
+                const progressBarInner = document.createElement('div');
+                progressBarInner.classList.add('progress-bar');
+                progressBarInner.setAttribute('role', 'progressbar');
+                progressBarInner.setAttribute('aria-valuenow', `${ (expense.data[startDate]["spending_to_base"] / expense.data[startDate]["budget_amount"]) * 100}`);
+                progressBarInner.setAttribute('aria-valuemin', '0');
+                progressBarInner.setAttribute('aria-valuemax', 100);
+                progressBarInner.style.width = `${(expense.data[startDate]["spending_to_base"] / expense.data[startDate]["budget_amount"]) * 100}%`;
+                progressBarInner.innerHTML = `${expense.data[startDate]["spending_to_base"].toFixed(2)}`;
+                progressBar.appendChild(progressBarInner);
+                expensePanel.appendChild(progressBar);
+                document.querySelector('.expenses').appendChild(expensePanel);
+            });
+            updateEntries();
+        }
     })
     .catch(error => { 
         console.error(error);
         initializeTokenForm();
 
+    });
+}
+
+function updateEntries() {
+    fetch(`https://dev.lunchmoney.app/v1/transactions?start_date=${startDate}&end_date=${endDate}&category_id=991111`, {
+        headers: {
+            'Authorization': `Bearer ${atob(token)}`,
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json())
+    .then(data => {
+        $('#expenses').bootstrapTable({
+            data: data.transactions
+        });
     });
 }
 
